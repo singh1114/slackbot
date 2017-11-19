@@ -30,7 +30,9 @@ A simple slack bot
 
 - Use the following format for timezone
 
-- if it is +0530 use +5.5
-- if it is -0550 use -5.5
+- if it is `+0530` use `+5.5`
+- if it is `+0500` use `+5.0`
+- if it is `-0500` use `-5.0`
+- if it is `-0550` use `-5.5`
 
-- The bot will send a message at 12;00 pm refering to you.
+- The bot will send a message at 12:00 pm everyday in the channel.

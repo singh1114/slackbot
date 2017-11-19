@@ -1,4 +1,5 @@
 import command
+import time
  
 class Event:
     def __init__(self, bot):
@@ -19,6 +20,17 @@ class Event:
      
     def handle_event(self, user, command, channel):
         if command and channel:
-            print "Received command: " + command + " in channel: " + channel + " from user: " + user
+            print("Received command: " + command + " in channel: " + channel + " from user: " + user)
             response = self.command.handle_command(user, command)
-            self.bot.slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
+            if(type(response) is int):
+                # time to sleep till 12 pm of the timeline
+                self.bot.slack_client.api_call("chat.postMessage", channel=channel, text="I will say hi in "+str(response), as_user=True)
+                time.sleep(response)
+                self.bot.slack_client.api_call("chat.postMessage", channel=channel, text="Hi!", as_user=True)
+
+                # Again to sleep for 24 hrs
+                while(True):
+                    time.sleep(24*60*60)
+                    self.bot.slack_client.api_call("chat.postMessage", channel=channel, text="Hi!", as_user=True)
+            else:
+                self.bot.slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)

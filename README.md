@@ -14,15 +14,32 @@ A simple slack bot
 
 `$ source bin/activate`
 
-`$ pip install slackclient`
-
 `$ git clone https://github.com/YOUR_GITHUB_USERNAME/slackbot`
 
 - change YOUR_GITHUB_USERNAME by your username
 
 `$ cd slackbot`
 
-- Fill in the details of bot in `bot.py` in line _7_ and _8_
+`$ pip install -r requirements.txt`
+
+`$ sudo apt-get install rabbitmq-server`
+
+- Start the rabbitmq-server once.
+
+`$ rabbitmq-server`
+
+- Use `ctrl+c` to stop the server.
+
+- Now you have start two things simuntaneously.
+
+`$ celery -A event worker --loglevel=info`
+
+- Open another terminal in same directory with virtualenv installed and run 
+
+`$ python anotherbot.py`
+
+- Fill in the details of bot in `bot.py` in line _7_ and _8_ and in `events.py` in line _15_
+
 
 `$ python anotherbot.py`
 
@@ -36,3 +53,4 @@ A simple slack bot
 - if it is `-0550` use `-5.5`
 
 - The bot will send a message at 12:00 pm everyday in the channel.
+

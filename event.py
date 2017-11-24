@@ -1,11 +1,20 @@
 import command
 import time
+import some
+from slackclient import SlackClient
+
+app = Celery('tasks', backend='rpc://', broker='pyamqp://localhost')
  
 class Event:
     def __init__(self, bot):
         self.bot = bot
         self.command = command.Command()
      
+    @app.task
+    def send_message_async(channel):
+        slack_client = SlackClient("xoxb*********")
+        slack_client.api_call("chat.postMessage", channel=channel, text='Hi!', as_user=True)
+
     def wait_for_event(self):
         events = self.bot.slack_client.rtm_read()
          
@@ -25,12 +34,13 @@ class Event:
             if(type(response) is int):
                 # time to sleep till 12 pm of the timeline
                 self.bot.slack_client.api_call("chat.postMessage", channel=channel, text="I will say hi in "+str(response), as_user=True)
-                time.sleep(response)
-                self.bot.slack_client.api_call("chat.postMessage", channel=channel, text="Hi!", as_user=True)
-
+                #time.sleep(response)
+                self.send_message_async.apply_async([channel], countdown=response)
                 # Again to sleep for 24 hrs
-                while(True):
-                    time.sleep(24*60*60)
-                    self.bot.slack_client.api_call("chat.postMessage", channel=channel, text="Hi!", as_user=True)
+                sleep_time = 24*60*60
+
+                #TODO use periodic_task instead of while True: http://docs.celeryproject.org/en/latest/userguide/periodic-tasks.html
+                while True:
+                    self.send_message_async.apply_async([channel], countdown=sleep_time)
             else:
                 self.bot.slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
